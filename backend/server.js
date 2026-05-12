@@ -21,9 +21,10 @@ app.use(compression());  // Compress all responses for speed
 
 // ─── CORS (allows React frontend to talk to backend) ─────────────────────────
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:5173', process.env.FRONTEND_URL],
+    origin: ['http://localhost:3000', 'http://localhost:5173', process.env.FRONTEND_URL].filter(Boolean),
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 
 // ─── Parse incoming JSON ──────────────────────────────────────────────────────

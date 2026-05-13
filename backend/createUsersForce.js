@@ -2,8 +2,7 @@ const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config();
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-// The user just provided their powerful Service Role key
-const SERVICE_ROLE_KEY = '***REMOVED_SERVICE_ROLE_KEY***';
+const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
     auth: { autoRefreshToken: false, persistSession: false }

@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const compression = require('compression');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 // Import routes
@@ -18,6 +19,26 @@ const PORT = process.env.PORT || 5000;
 // ─── Performance & Security Middleware ───────────────────────────────────────
 app.use(helmet());       // Set secure HTTP headers
 app.use(compression());  // Compress all responses for speed
+
+// ─── Rate Limiting (prevents brute-force & abuse) ────────────────────────────
+const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100,                 // 100 requests per window per IP
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: 'error', message: 'Too many requests. Please try again later.' }
+});
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 10,                  // Only 10 login attempts per window
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { status: 'error', message: 'Too many login attempts. Please wait 15 minutes.' }
+});
+
+app.use('/api', generalLimiter);
+app.use('/api/auth/login', authLimiter);
 
 // ─── CORS (allows React frontend to talk to backend) ─────────────────────────
 app.use(cors({
